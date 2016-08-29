@@ -1,0 +1,174 @@
+<html lang ="en">
+	<head>
+		<title>Movie Returns</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width initial-scale=1">
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+		<script src="js/angular.min.js"></script>
+
+		<!--front end input validation script -->
+		<script>
+			var app=angular.module("validApp",[]);
+			app.controller('returnCtrl',function($scope,$http){
+				$scope.nicptrn="^[0-9]{9}v$";
+				$scope.cidptrn="^[0-9]{6}$";
+				$scope.formdata={};
+				$scope.hideDisplay=true;
+				$scope.fname="";
+				$scope.lname="";
+				$scope.getRentalData=function(){
+					console.log( $scope.formdata);
+					$http.get({
+						method:'GET',
+						url:'/return_movie'
+					});
+					$http.post("/get_rental_info", $scope.formdata)
+					.then(function (response) {
+						if (response.data)
+						$scope.msg = "Post Data Submitted Successfully!";
+						$scope.statusval = response.status;
+						$scope.statustext = response.statusText;
+						$scope.headers = response.headers();
+						$scope.hideDisplay=false;
+						console.log("response:");
+						console.log(response);
+						console.log(response.data.User[0]);
+						$scope.fname=response.data.User[0].usr_first_name;
+						$scope.lname=response.data.User[0].usr_last_name;
+						console.log( $scope.fname);
+					});
+				};
+			});
+		</script>
+	</head>
+
+
+	<body ng-app="validApp" ng-controller="returnCtrl" >
+		<!-- Navigation bar -->
+		<nav class="navbar navbar-inverse">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">Mega Movies</a>
+				</div>
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#">Home</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#"><span class="glyphicon glyphicon-log-out"></span>Log Out</a></li>
+				</ul>
+			</div>
+		</nav>
+
+		<!-- Data submition section for returns-->
+		<div class="container">
+			<form name="inputForm" class="form-horizontal" >
+				<div class="form-group">
+					<label for="nic" class="control-label col-sm-2">NIC:</label>
+					<div class=" col-sm-10">
+						<input type="text" ng-model="formdata.nic" name="nic" class="form-control" placeholder="NIC" ng-pattern="nicptrn" required>
+						<span ng-show="inputForm.nic.$touched && inputForm.nic.$error.required">This field is required!</span>
+						<span ng-show="inputForm.nic.$touched && inputForm.nic.$error.pattern">please enter valid NIC No.</span>
+
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="cid" class="control-label col-sm-2">Copy ID:</label>
+					<div class=" col-sm-10">
+						<input type="text" ng-model="formdata.cid" name="cid" placeholder="Copy ID" class="form-control" ng-pattern="cidptrn" required>
+						<span ng-show="inputForm.cid.$touched && inputForm.cid.$error.required">This field is required!</span>
+						<span ng-show="inputForm.cid.$touched && inputForm.cid.$error.pattern">please enter valid CID No.</span>
+
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button type="submit" name="submit" class="btn btn-info" ng-click="getRentalData()" ng-disabled="inputForm.$invalid">Submit</button>
+
+					</div>
+				</div>
+
+			</form>
+
+			<!-- testing section	-->
+			<div>
+				<p>Output Message : {{msg}}</p>
+				<p>StatusCode: {{statusval}}</p>
+				<p>Status: {{statustext}}</p>
+				<p>Response Headers: {{headers}}</p>
+			</div>
+		</div>
+		<hr>
+
+
+
+		<!-- Display information on relevant rental which are returned from the database -->
+		<div  class="container" ng-hide="hideDisplay">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label for="rid" class="control-label col-sm-2">Rental ID:</label>
+					<div class=" col-sm-10">
+						<input type="text" id="rid" class="form-control" >
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="fname" class="control-label col-sm-2">First Name:</label>
+					<div class=" col-sm-10">
+						<input type="text" id="fname" class="form-control" ng-model="fname">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="lname" class="control-label col-sm-2">Last Name:</label>
+					<div class=" col-sm-10">
+						<input type="text" id="lname" class="form-control" ng-model="lname">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="utype" class="control-label col-sm-2">User Type:</label>
+					<div class=" col-sm-10">
+						<input type="text" id="utype" class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="mname" class="control-label col-sm-2">Movie Name:</label>
+					<div class=" col-sm-10">
+						<input type="text" id="mname" class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="rental_date" class="control-label col-sm-2">Rental Date:</label>
+					<div class=" col-sm-10">
+						<input type="text" id="rental_date" class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="expected_date" class="control-label col-sm-2">Expected Return Date:</label>
+					<div class=" col-sm-10">
+						<input type="text" id="expected_date" class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="rental_fee" class="control-label col-sm-2">Rental Fee:</label>
+					<div class=" col-sm-10">
+						<input type="text" id="rental_fee" class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="fine" class="control-label col-sm-2">Fine:</label>
+					<div class=" col-sm-10">
+						<input type="text" id="fine" class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button type="submit" name="returned" class="btn btn-info" >Returned</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+
+
+	</body>
+</html>
