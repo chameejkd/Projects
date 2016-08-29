@@ -9,7 +9,6 @@ INSERT INTO users(usr_first_name ,usr_last_name,usr_nic,usr_tel_no,usr_address,u
 
 
 			
-INSERT INTO movie_rentals(ren_user_id,ren_movie_copy_id,ren_date,ren_expected_return_date,ren_authorizer_id,ren_fee) VALUES(00001,000001,'2016-08-02','2016-08-09',00002,1000);
 
 
 INSERT INTO movies(mov_name,mov_year,mov_genre_id,mov_language_id,mov_description ,mov_cast,mov_image,mov_rental_fee) VALUES("Avengers","2015",); 
